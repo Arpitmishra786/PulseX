@@ -1,0 +1,8 @@
+__pycache__/ 
+*.py[cod] 
+venv/ 
+crypto_env/ 
+.env/ 
+.vscode/ 
+.streamlit/ 
+.conda/ 
