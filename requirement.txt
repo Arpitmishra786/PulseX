@@ -1,8 +1,8 @@
 streamlit
-yfinance
-plotly
-numpy
 pandas
+numpy
+requests
+plotly
 scikit-learn
 tensorflow
-ta
+streamlit-autorefresh
