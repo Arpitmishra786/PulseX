@@ -5,4 +5,4 @@ requests
 plotly
 scikit-learn
 tensorflow
-streamlit-autorefresh
+streamlit-autorefresh @ https://github.com/streamlit/streamlit-autorefresh/archive/refs/heads/main.zip
