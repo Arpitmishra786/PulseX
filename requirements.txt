@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-streamlit==1.35.0
-streamlit-autorefresh==0.0.4
-requests==2.31.0
-pandas==2.2.2
-plotly==5.22.0
-numpy==1.26.4
-scikit-learn==1.4.2
-tensorflow==2.15.0
-=======
 streamlit
 pandas
 numpy
@@ -16,4 +6,3 @@ plotly
 scikit-learn
 tensorflow
 streamlit-autorefresh @ https://github.com/streamlit/streamlit-autorefresh/archive/refs/heads/master.zip
->>>>>>> e5970c24e190bd13d511666d477664b7886eb8fb
