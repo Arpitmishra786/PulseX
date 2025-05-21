@@ -4,6 +4,7 @@ import requests
 import pandas as pd
 import plotly.graph_objects as go
 import numpy as np
+from datetime import datetime
 from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Input
@@ -11,23 +12,23 @@ from tensorflow.keras.layers import LSTM, Dense, Input
 # ----- Streamlit Setup -----
 st.set_page_config(page_title="Crypto Trading Platform", layout="wide")
 st_autorefresh(interval=15000, key="refresh")
-
 st.title("🚀 Crypto Trading Platform")
 
 # ----- Functions -----
 def get_price(symbol="BTCUSDT"):
+    url = f"https://api.binance.com/api/v3/ticker/price?symbol={symbol}"
     try:
-        url = f"https://api.binance.com/api/v3/ticker/price?symbol={symbol}"
-        data = requests.get(url, timeout=5).json()
+        response = requests.get(url, timeout=10)
+        data = response.json()
         return float(data['price'])
     except Exception as e:
         st.error(f"Error fetching price data: {e}")
         return None
 
 def get_ohlcv(symbol="BTCUSDT", interval="1m", limit=100):
+    url = f"https://api.binance.com/api/v3/klines?symbol={symbol}&interval={interval}&limit={limit}"
     try:
-        url = f"https://api.binance.com/api/v3/klines?symbol={symbol}&interval={interval}&limit={limit}"
-        response = requests.get(url, timeout=5)
+        response = requests.get(url, timeout=10)
         data = response.json()
         df = pd.DataFrame(data, columns=[
             'timestamp', 'open', 'high', 'low', 'close', 'volume',
@@ -55,26 +56,15 @@ def add_rsi(df, period=14):
     delta = df['close'].diff()
     gain = delta.where(delta > 0, 0.0)
     loss = -delta.where(delta < 0, 0.0)
-
-    avg_gain = gain.rolling(window=period, min_periods=period).mean()
-    avg_loss = loss.rolling(window=period, min_periods=period).mean()
-
-    # Avoid division by zero by replacing zeros with small number
-    avg_loss = avg_loss.replace(0, 1e-10)
-
+    avg_gain = gain.rolling(window=period).mean()
+    avg_loss = loss.rolling(window=period).mean()
     rs = avg_gain / avg_loss
     df['rsi'] = 100 - (100 / (1 + rs))
     return df
 
 def generate_signals(df):
-    df['signal'] = np.where(
-        (df['macd'] > df['macd_signal']) & (df['macd'].shift(1) <= df['macd_signal'].shift(1)),
-        'Buy',
-        np.where(
-            (df['macd'] < df['macd_signal']) & (df['macd'].shift(1) >= df['macd_signal'].shift(1)),
-            'Sell', ''
-        )
-    )
+    df['signal'] = np.where((df['macd'] > df['macd_signal']) & (df['macd'].shift(1) <= df['macd_signal'].shift(1)), 'Buy',
+                     np.where((df['macd'] < df['macd_signal']) & (df['macd'].shift(1) >= df['macd_signal'].shift(1)), 'Sell', ''))
     return df
 
 def create_sequences(data, seq_len=10):
@@ -136,7 +126,7 @@ if len(X) > 0:
     model.add(LSTM(50))
     model.add(Dense(1))
     model.compile(optimizer='adam', loss='mean_squared_error')
-    
+
     with st.spinner("Training LSTM model..."):
         model.fit(X, y, epochs=10, batch_size=8, verbose=0)
 
