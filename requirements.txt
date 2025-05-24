@@ -1,8 +1,8 @@
 streamlit
-pandas
-numpy
-requests
-plotly
-scikit-learn
-tensorflow==2.13.0
 streamlit-autorefresh
+requests
+pandas
+plotly
+numpy
+scikit-learn
+tensorflow
