@@ -28,11 +28,11 @@ def get_price(symbol="BTCUSDT"):
     try:
         response = requests.get(url, timeout=10)
         data = response.json()
-	if 'price' in data:
-        return float(data['price'])
-	else:
-		st.error(f"Unexpected API response: {data}")
-		return None
+        if 'price' in data:
+            return float(data['price'])
+        else:
+            st.error(f"Unexpected API response: {data}")
+            return None
     except Exception as e:
         st.error(f"Error fetching price data: {e}")
         return None
